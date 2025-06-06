@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+{% load static cart_tags %}
+{% load math_filters %}
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice #{{ order.id }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        .total { text-align: right; font-weight: bold; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Invoice #{{ order.id }}</h1>
+    <p><strong>Date:</strong> {{ order.created_at|date:"d M Y" }}</p>
+    <p><strong>Customer:</strong> {{ order.user.name }}</p>
+    <p><strong>Phone:</strong> {{ order.user.number }}</p>
+    <p><strong>Address:</strong> {{ order.address }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price (₹)</th>
+                <th>Quantity</th>
+                <th>Subtotal (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price|floatformat:2|add:"0.00"|floatformat:2|mul:item.quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="total">Total: ₹{{ order.total }}</p>
+
+</body>
+</html>

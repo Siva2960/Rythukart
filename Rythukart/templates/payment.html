@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UPI Payment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      padding-top: 10vh;
+    }
+
+    .payment-box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .amount-display {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .upi-options {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .upi-options img {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .upi-options img:hover {
+      transform: scale(1.1);
+    }
+
+    .alt-methods {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .method {
+      margin: 15px 0;
+    }
+
+    .method label {
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="number"], input[type="month"], input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .confirm-btn, .pay-now-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .confirm-btn:hover, .pay-now-btn:hover {
+      background-color: #388E3C;
+    }
+
+    .pay-now-btn {
+      background-color: #007bff;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="payment-box">
+  <h2>Complete Your Payment</h2>
+  <div class="amount-display">Total: ₹<span id="amountDisplay">0</span></div>
+
+  <h3>UPI Apps</h3>
+  <div class="upi-options">
+    <img src="/static/phonepay.jpeg" alt="PhonePe" onclick="payWithUPI('phonepe')">
+    <img src="/static/gpay.jpeg" alt="GPay" onclick="payWithUPI('gpay')">
+    <img src="/static/paytm.jpeg" alt="Paytm" onclick="payWithUPI('paytm')">
+  </div>
+
+  <div class="alt-methods">
+    <div class="method">
+      <label for="manualUpi">Enter UPI ID:</label>
+      <input type="text" id="manualUpi" placeholder="example@upi" />
+      <button class="confirm-btn" onclick="payWithEnteredUPI()">Pay</button>
+    </div>
+
+    <div class="method">
+      <label>
+        <input type="radio" name="paymentOption" value="card" onclick="openCardModal()"> Pay by Card
+      </label>
+    </div>
+
+    <div class="method">
+      <label>
+        <input type="radio" name="paymentOption" value="cod" /> Cash on Delivery (COD)
+      </label>
+    </div>
+  </div>
+
+  <button class="pay-now-btn" onclick="confirmPayment()">Pay Now</button>
+</div>
+
+<!-- Card Payment Modal -->
+<div id="cardModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeCardModal()">&times;</span>
+    <h3>Enter Card Details</h3>
+    <input type="text" placeholder="Cardholder Name" required>
+    <input type="text" placeholder="Card Number" maxlength="16" required>
+    <input type="month" required>
+    <input type="password" placeholder="CVV" maxlength="3" required>
+    <button class="confirm-btn" onclick="submitCardDetails()">Submit</button>
+  </div>
+</div>
+
+<!-- Timer Modal -->
+<div id="timerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeTimerModal()">&times;</span>
+    <h3>Complete Your UPI Payment</h3>
+    <div id="popupTimer" style="font-size: 1.2rem; font-weight: bold; color: #d9534f;"></div>
+  </div>
+</div>
+
+<script>
+  const upi_id = "yourupi@bank";
+  const payee_name = "Your Store";
+  const amount = localStorage.getItem('paymentTotal') || 0;
+  document.getElementById('amountDisplay').innerText = amount;
+
+  function payWithUPI(app) {
+    const url = `upi://pay?pa=${upi_id}&pn=${payee_name}&am=${amount}&cu=INR`;
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      window.location.href = url;
+    }
+    startTimer();
+  }
+
+  function payWithEnteredUPI() {
+    const enteredUPI = document.getElementById('manualUpi').value.trim();
+    if (!enteredUPI) {
+      alert("Please enter a valid UPI ID.");
+      return;
+    }
+    const url = `upi://pay?pa=${enteredUPI}&pn=${payee_name}&am=${amount}&cu=INR`;
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      window.location.href = url;
+    }
+    startTimer();
+  }
+
+  function startTimer() {
+    document.getElementById("timerModal").style.display = "block";
+    let timeLeft = 600;
+    const popupTimer = document.getElementById("popupTimer");
+
+    const interval = setInterval(() => {
+      let minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      popupTimer.innerText = `Please complete payment within ${minutes}:${seconds.toString().padStart(2, '0')}`;
+      timeLeft--;
+
+      if (timeLeft < 0) {
+        clearInterval(interval);
+        popupTimer.innerText = "Transaction expired. Please try again.";
+      }
+    }, 1000);
+  }
+
+  function closeTimerModal() {
+    document.getElementById("timerModal").style.display = "none";
+  }
+
+  function openCardModal() {
+    document.getElementById("cardModal").style.display = "block";
+  }
+
+  function closeCardModal() {
+    document.getElementById("cardModal").style.display = "none";
+  }
+
+  function submitCardDetails() {
+    alert("Card details submitted (demo only).");
+    closeCardModal();
+  }
+
+  function confirmPayment() {
+    const selected = document.querySelector('input[name="paymentOption"]:checked');
+    if (selected) {
+      window.location.href = "/home/";
+    } else {
+      alert("Please select a payment method.");
+    }
+  }
+</script>
+
+</body>
+</html>

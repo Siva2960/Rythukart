@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+{% load math_filters %}
+{% load static cart_tags %}
+<head>
+  <title>My Orders</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .order { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 6px; }
+    .order h3 { margin-bottom: 10px; }
+    .item { margin-left: 20px; }
+  </style>
+</head>
+<body>
+  <h2>📦 My Orders</h2>
+
+  {% for order in orders %}
+    <div class="order">
+      <h3>Order ID: {{ order.id }} | Date: {{ order.created_at|date:"d M Y, H:i" }}</h3>
+      <p><strong>Status:</strong> {{ order.status }}</p>
+      <p><strong>Delivery Address:</strong> {{ order.address }}</p>
+      <p><strong>Total:</strong> ₹{{ order.total }}</p>
+      <h4>Items:</h4>
+      <ul>
+        {% for item in order.items.all %}
+          <li class="item">
+            {{ item.product.name }} — ₹{{ item.price }} × {{ item.quantity }} = ₹{{ item.price|floatformat:2|add:"0.00"|floatformat:2|mul:item.quantity }}
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'generate_invoice' order.id %}" class="btn btn-sm btn-success">Download Invoice</a>
+    </div>
+  {% empty %}
+    <p>No orders found.</p>
+  {% endfor %}
+
+</body>
+</html>

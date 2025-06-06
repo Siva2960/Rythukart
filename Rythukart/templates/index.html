@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rythukart</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body, html { height: 100%; width: 100%; }
+
+    header {
+  height: 30%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: -1;
+  background-color: #4CAF50; /* fallback color behind image */
+}
+
+
+.header-title {
+  position: relative;
+  color: white;
+  font-size: 3rem;
+  font-weight: bold;
+  z-index: 1;
+}
+
+
+   main {
+  height: 70%;
+  background-image: url("{% static 'home.png' %}");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .buttons button {
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #2e8b57;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    .buttons button:hover {
+      background-color: #246b45;
+    }
+
+    /* Popups */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100%; width: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .popup-content h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .popup-content input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .popup-content button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: black;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+     .side-image {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%; /* Increased height for better fit */
+  width: auto;
+  max-width: 18%; /* Limit to avoid overwhelming the header */
+  object-fit: cover;
+  z-index: 0;
+}
+
+.left-img {
+  left: 0%;
+}
+
+.right-img {
+  right: 0%;
+}
+
+
+  </style>
+</head>
+<body>
+
+ <header>
+  <!-- Left Image -->
+  <img src="{% static 'OIP.webp' %}" alt="Left Image" class="side-image left-img" />
+
+  <!-- Right Image -->
+  <img src="{% static 'OIP.jpeg' %}" alt="Right Image" class="side-image right-img" />
+
+  <!-- Background Image -->
+  <img src="{% static 'RK.png' %}" alt="Header Image" class="header-bg" />
+
+</header>
+
+
+  <main>
+
+    <div class="buttons">
+      <button onclick="openPopup('register')">Register</button>
+      <button onclick="openPopup('login')">Login</button>
+        <button onclick="window.location.href='{% url 'homee' %}'">Without Login</button>
+
+{% if error_message %}
+  <p style="color: red; text-align: center; margin-bottom: 20px;">{{ error_message }}</p>
+{% endif %}
+
+    </div>
+  </main>
+
+  <!-- Register Popup -->
+  <div id="registerPopup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('register')">&times;</span>
+<form action="{% url 'Register' %}" method="POST" onsubmit="return validateRegisterForm()">
+  {% csrf_token %}
+        <h2>Register</h2>
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="text" name="number" placeholder="Phone Number" required />
+        <input type="password" id="password" name="password" placeholder="Password" required />
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+        <div id="registerError" class="error"></div>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login Popup -->
+  <div id="loginPopup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('login')">&times;</span>
+      <form action="{% url 'Login' %}" method="POST" onsubmit="return validateLoginForm()">
+        {% csrf_token %}
+        <h2>Login</h2>
+        <input type="text" name="number" placeholder="Phone Number" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <div id="loginError" class="error"></div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    function openPopup(type) {
+      document.getElementById(type + 'Popup').style.display = 'flex';
+    }
+
+    function closePopup(type) {
+      document.getElementById(type + 'Popup').style.display = 'none';
+    }
+
+    function validateRegisterForm() {
+      const pwd = document.getElementById('password').value;
+      const cpwd = document.getElementById('confirmPassword').value;
+      const error = document.getElementById('registerError');
+
+      const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&_])[A-Za-z\d@$!%*?#&_]{6,}$/;
+
+      if (!pattern.test(pwd)) {
+        error.textContent = "Password must have 1 capital, 1 small, 1 number, 1 special character, and be at least 6 characters.";
+        return false;
+      }
+
+      if (pwd !== cpwd) {
+        error.textContent = "Passwords do not match!";
+        return false;
+      }
+
+    }
+
+    function validateLoginForm() {
+      document.getElementById('loginError').textContent = ""; // Add validations later if needed
+      return true;
+    }
+  </script>
+
+</body>
+</html>

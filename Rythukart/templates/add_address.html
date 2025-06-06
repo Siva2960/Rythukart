@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Address</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body class="p-4 bg-light">
+
+  <h2>Select How to Add Location</h2>
+  <button id="getLiveBtn" class="btn btn-success me-3">Get Live Location</button>
+  <button id="addLocationBtn" class="btn btn-primary">Add Location Manually</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content p-4">
+        <form id="locationForm" method="post">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Name" required>
+          <input type="text" name="number" placeholder="Phone Number" required>
+          <input type="text" name="address_line" placeholder="Address" required>
+          <input type="text" name="near_by" placeholder="Near By" required>
+
+          <!-- Fields for manual input -->
+          <div id="manualFields" style="display:none;">
+            <input type="text" name="area" id="manualArea" placeholder="Area" required>
+            <input type="text" name="pincode" id="manualPincode" placeholder="Pincode" required>
+            <input type="text" name="district" id="manualDistrict" placeholder="City/District" required>
+          </div>
+
+          <!-- Hidden for geolocation -->
+          <input type="hidden" name="latitude" id="latitude">
+          <input type="hidden" name="longitude" id="longitude">
+
+          <button type="submit" class="btn btn-primary w-100">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const modal = new bootstrap.Modal(document.getElementById('locationModal'));
+    let isLive = false;
+
+    document.getElementById('getLiveBtn').onclick = () => {
+      isLive = true;
+      document.getElementById('manualFields').style.display = 'none';
+      modal.show();
+      getLiveLocation();
+    };
+
+    document.getElementById('addLocationBtn').onclick = () => {
+      isLive = false;
+      document.getElementById('manualFields').style.display = 'block';
+      modal.show();
+    };
+
+    async function getLiveLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById('latitude').value = lat;
+          document.getElementById('longitude').value = lon;
+
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+          const data = await res.json();
+          const address = data.address;
+
+          document.querySelector('input[name="pincode"]').value = address.postcode || "";
+          document.querySelector('input[name="district"]').value = address.county || address.city_district || "";
+          document.querySelector('input[name="area"]').value = address.suburb || address.village || "";
+
+        }, () => {
+          alert("Unable to get location.");
+        });
+      } else {
+        alert("Geolocation not supported.");
+      }
+    }
+
+    document.getElementById('manualPincode').addEventListener('blur', async function () {
+      const pincode = this.value.trim();
+      if (pincode.length >= 4) {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?postalcode=${pincode}&country=India&format=json`);
+        const data = await res.json();
+        if (data.length > 0) {
+          const reverse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${data[0].lat}&lon=${data[0].lon}&format=json`);
+          const addr = (await reverse.json()).address;
+          document.getElementById('manualArea').value = addr.suburb || addr.village || "";
+          document.getElementById('manualDistrict').value = addr.county || addr.city_district || "";
+        }
+      }
+    });
+
+    document.getElementById('locationForm').onsubmit = async function (e) {
+      e.preventDefault();
+
+      const form = this;
+      const formData = new FormData(form);
+
+      if (!isLive) {
+        formData.set('district', document.getElementById('manualDistrict').value);
+        formData.set('area', document.getElementById('manualArea').value);
+        formData.set('pincode', document.getElementById('manualPincode').value);
+      }
+
+      const csrfToken = form.querySelector('input[name=csrfmiddlewaretoken]').value;
+
+      const res = await fetch('/save-location/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken },
+        body: formData
+      });
+
+      const result = await res.json();
+      if (result.message) {
+        modal.hide();
+        window.location.href = "/cart/";
+      } else {
+        alert(result.error || "Something went wrong");
+      }
+    };
+  </script>
+</body>
+</html>

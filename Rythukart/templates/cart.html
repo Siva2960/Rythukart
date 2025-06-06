@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+      align-items: center;
+    }
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+    .cart-total {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .back-to-shop {
+      background-color: #ddd;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: black;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .quantity-controls button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Your Cart</h2>
+
+{% if cart_items %}
+  {% for item in cart_items %}
+    <div class="cart-item">
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+        <div>
+          <p><strong>{{ item.product.name }}</strong></p>
+          <p>₹{{ item.product.price }}</p>
+        </div>
+      </div>
+      <div>
+        <div class="quantity-controls">
+          <form method="post" action="{% url 'decrease_cart_item' item.id %}">
+            {% csrf_token %}
+            <button type="submit">−</button>
+          </form>
+          <span>{{ item.quantity }}</span>
+          <form method="post" action="{% url 'increase_cart_item' item.id %}">
+            {% csrf_token %}
+            <button type="submit">+</button>
+          </form>
+        </div>
+        <p>Total: ₹{{ item.subtotal }}</p>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Your cart is empty.</p>
+{% endif %}
+
+<div class="cart-total">
+  Total: ₹{{ cart_total }}
+</div>
+
+<button id="backBtn" class="back-to-shop">Back to shop</button>
+<button id="selectAddressBtn" class="back-to-shop" style="margin-left: 10px;">Select Address</button>
+<button id="placeOrderBtn" class="back-to-shop" style="margin-left: 10px;" disabled>Place Order</button>
+
+<!-- Modal -->
+<div id="addressModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+  <div style="background:white; margin:60px auto; padding:20px; width:90%; max-width:500px; border-radius:8px;">
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Django addresses (hidden initially) -->
+<div id="djangoAddressList" style="display: none;">
+  {% if user_addresses %}
+    <h3>Select Delivery Address</h3>
+    {% for addr in user_addresses %}
+      <div style="border: 1px solid #ccc; padding: 10px; margin: 10px;">
+        <p><strong>Name:</strong> {{ addr.name }}</p>
+        <p><strong>Phone:</strong> {{ addr.number }}</p>
+        <p><strong>Address:</strong> {{ addr.address_line }}, {{ addr.area }}, {{ addr.near_by }}</p>
+        <p><strong>Pincode:</strong> {{ addr.pincode }}</p>
+        <button onclick="selectThisAddress('{{ addr.id }}')">Use This Address</button>
+        <button onclick="addNewAddress()">Add New Address</button>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No saved addresses. <a href="{% url 'add_address' %}">Add New Address</a></p>
+  {% endif %}
+</div>
+
+<script>
+  // show modal with address list
+  document.getElementById("selectAddressBtn").addEventListener("click", function () {
+    const modal = document.getElementById("addressModal");
+    const modalContent = document.getElementById("modalContent");
+    modalContent.innerHTML = document.getElementById("djangoAddressList").innerHTML;
+    modal.style.display = "block";
+  });
+
+  // select address and enable Place Order
+  function selectThisAddress(id) {
+    localStorage.setItem("selectedAddressId", id);
+    document.getElementById("placeOrderBtn").disabled = false;
+    document.getElementById("addressModal").style.display = "none";
+  }
+
+  // go to payment only after address selected
+  document.getElementById("placeOrderBtn").addEventListener("click", function () {
+    const selected = localStorage.getItem("selectedAddressId");
+    if (selected) {
+      window.location.href = "{% url 'payment' %}";
+    } else {
+      alert("Please select an address first.");
+    }
+  });
+
+  // go back to previous page
+  document.getElementById("backBtn").addEventListener("click", function () {
+    window.history.back();
+  });
+   window.addNewAddress = function () {
+  window.location.href = 'add_address.html';
+}
+</script>
+
+</body>
+</html>

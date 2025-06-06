@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rythukart Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: 15vh;
+      background-color: #4CAF50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-right img {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    .logout-btn {
+       padding: 12px 24px;
+  font-size: 1.1rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+    }
+    #logoutBtn:hover {
+  background-color: #d32f2f;
+}
+.categories {
+  height: 45vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 10px;
+}
+
+.categories a {
+  display: block; /* Ensure the link is treated as a block element */
+  width: 30%; /* Fixed width for the image container */
+  height: 90%; /* Fixed height for the image container */
+}
+
+.categories a img {
+  width: 100%;  /* Ensure image takes up full width */
+  height: 100%; /* Ensure image takes up full height */
+  object-fit: cover;  /* Prevent distortion and fill the container */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
+   .quotes {
+  height: 40vh;
+  background-color: #ffffff;
+  background-size: contain; /* Ensures the image covers the entire section */
+  background-position: center; /* Centers the image */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+
+    .quote-text {
+  font-size: 2.5rem; /* Increased font size */
+  color: green; /* Changed font color to green */
+  font-weight: bold; /* Made font bold */
+  animation: fade 1s ease-in-out;
+}
+
+
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>Rythukart</div>
+    <div class="header-right">
+      <a href="https://wa.me/911234567890" target="_blank">
+  <img src="/static/W.jpeg" alt="WhatsApp" />
+</a>
+     <button class="logout-btn" id="logoutBtn">Login</button>
+
+    </div>
+  </header>
+
+  <div class="categories">
+  <a href="{% url 'veg' %}"><img src="/static/cat1.jpg" alt="Category 1" /></a>
+  <a href="{% url 'pappu' %}"><img src="/static/cat2.jpg" alt="Category 2" /></a>
+  <a href="{% url 'rice' %}"><img src="/static/cat3.jpeg" alt="Category 3" /></a>
+</div>
+
+
+  <div class="quotes">
+    <div id="quote" class="quote-text">
+      "Freshness from Farm to Home!"
+    </div>
+  </div>
+
+  <script>
+    const quotes = [
+      "Freshness from Farm to Home!",
+      "Eat healthy, live happy.",
+      "Support local farmers, grow communities.",
+      "Natural produce, better you.",
+      "Harvesting health daily."
+    ];
+
+    let index = 0;
+    const quoteEl = document.getElementById("quote");
+
+    setInterval(() => {
+      index = (index + 1) % quotes.length;
+      quoteEl.textContent = quotes[index];
+    }, 3000); // Change quote every 3 seconds
+  </script>
+<script>
+  document.getElementById("logoutBtn").addEventListener("click", function () {
+    window.location.href = "index.html";
+  });
+</script>
+
+
+</body>
+</html>

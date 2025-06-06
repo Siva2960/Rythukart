@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rythukart Page</title>
+  <script src="{% static 'knownProducts.js' %}"></script>
+  <style>
+    /* ...your CSS unchanged... */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body, html {
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      height: 15vh;
+      background-color: #4CAF50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      color: white;
+      font-size: 2rem;
+      position: relative;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header-right img {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+    .logout-btn {
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-color: #d32f2f;
+    }
+    .menu-icon {
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 20px;
+      background-color: white;
+      color: black;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      z-index: 1000;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: #333;
+    }
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+    .categories {
+      height: 45vh;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: #f0f0f0;
+      padding: 10px;
+    }
+    .categories a {
+      display: block;
+      width: 30%;
+      height: 90%;
+    }
+    .categories a img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .quotes {
+      height: 40vh;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-text {
+      font-size: 2.5rem;
+      color: green;
+      font-weight: bold;
+      animation: fade 1s ease-in-out;
+    }
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #mic-indicator {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: rgba(76, 175, 80, 0.8);
+      border-radius: 50%;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 0 15px green;
+      animation: pulse 1s infinite;
+      z-index: 999;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+<form id="csrf-form">{% csrf_token %}</form>
+<header>
+  <div class="menu-icon" onclick="toggleMenu()">☰</div>
+  <div>Rythukart</div>
+  <div class="header-right">
+    <div id="mic-indicator" style="display:none;">🎤</div>
+    <button type="button" id="assistantBtn">🎤 Ask<br>Assistant</button>
+    <a href="https://wa.me/911234567890" target="_blank">
+      <img src="{% static 'W.jpeg' %}" alt="WhatsApp" />
+    </a>
+    <button class="logout-btn" id="logoutBtn" type="button">Logout</button>
+  </div>
+  <div id="dropdownMenu" class="dropdown-menu">
+    <a href="{% url 'home' %}">🏠 Home</a>
+    <a href="{% url 'view_cart' %}">🛒 Cart</a>
+    <a href="{% url 'order_history' %}">📦 My Orders</a>
+  </div>
+</header>
+<div class="categories">
+  <a href="{% url 'veg' %}"><img src="{% static 'cat1.jpg' %}" alt="Vegetables" /></a>
+  <a href="{% url 'pappu' %}"><img src="{% static 'cat2.jpg' %}" alt="Pulses" /></a>
+  <a href="{% url 'rice' %}"><img src="{% static 'cat3.jpeg' %}" alt="Rice" /></a>
+</div>
+<div class="quotes">
+  <div class="quote-text" id="quote">"Freshness from Farm to Home!"</div>
+</div>
+<script>
+const quotes = [
+  "Freshness from Farm to Home!",
+  "Eat healthy, live happy.",
+  "Support local farmers, grow communities.",
+  "Natural produce, better you.",
+  "Harvesting health daily."
+];
+let index = 0;
+setInterval(() => {
+  index = (index + 1) % quotes.length;
+  document.getElementById("quote").textContent = quotes[index];
+}, 3000);
+
+function toggleMenu() {
+  const menu = document.getElementById('dropdownMenu');
+  menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+}
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  window.location.href = "{% url 'logout_view' %}";
+});
+</script>
+<script>
+// --- Voice Assistant Logic ---
+const userName = "{{ name|default:'User' }}";
+
+// Levenshtein Distance for fuzzy matching
+function levenshtein(a, b) {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix = Array.from({ length: a.length + 1 }, () =>
+    Array(b.length + 1).fill(0)
+  );
+  for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      if (a[i - 1] === b[j - 1]) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j - 1] + 1
+        );
+      }
+    }
+  }
+  return matrix[a.length][b.length];
+}
+
+function findBestProductMatch(spokenWord, threshold = 2) {
+  const word = spokenWord.trim().toLowerCase();
+  let bestMatch = null;
+  let bestDistance = Infinity;
+  for (const product of knownProducts) {
+    for (const synonym of product.synonyms) {
+      const distance = levenshtein(word, synonym.toLowerCase());
+      if (distance < bestDistance) {
+        bestMatch = product.name;
+        bestDistance = distance;
+      }
+      if (distance === 0) return product.name; // Perfect match
+    }
+  }
+  return bestDistance <= threshold ? bestMatch : null;
+}
+function extractAndMapProducts(transcript) {
+  const words = transcript
+    .toLowerCase()
+    .replace(/[^\w\s\u0C00-\u0C7F\u0900-\u097F]/g, "")
+    .split(/and|,|plus|add/).map(str => str.trim()).filter(Boolean);
+  const mapped = [];
+  for (const w of words) {
+    const prod = findBestProductMatch(w);
+    if (prod && !mapped.includes(prod)) mapped.push(prod);
+  }
+  return mapped;
+}
+function speak(text, lang = 'en-IN', callback = null) {
+  const utterance = new window.SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  if (callback) utterance.onend = callback;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+function getCSRFToken() {
+  const el = document.querySelector('input[name="csrfmiddlewaretoken"]');
+  return el ? el.value : "";
+}
+function listenForProducts(onResult, lang = "en-IN") {
+  const mic = document.getElementById("mic-indicator");
+  if (mic) mic.style.display = "flex";
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = lang;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = function(event) {
+    if (mic) mic.style.display = "none";
+    const transcript = event.results[0][0].transcript;
+    onResult(transcript);
+  };
+  recognition.onerror = function(event) {
+    if (mic) mic.style.display = "none";
+    speak("Sorry, I didn't catch that. Please try again.");
+  };
+  recognition.onend = function() {
+    if (mic) mic.style.display = "none";
+  }
+  recognition.start();
+}
+function startVoiceCart(userName = "User") {
+  const instructions = [
+    `Hello ${userName}! Welcome to Voice Cart Assistance.`,
+
+  ];
+  let i = 0;
+  function speakNext() {
+    if (i < instructions.length) {
+      speak(instructions[i], "en-IN", speakNext);
+      i++;
+    } else {
+      listenForProducts(handleProducts, "en-IN");
+    }
+  }
+  speakNext();
+  async function handleProducts(transcript) {
+    const products = extractAndMapProducts(transcript);
+    if (products.length === 0) {
+      speak("Sorry, I could not recognize any product. Please try again.");
+      setTimeout(() => listenForProducts(handleProducts, "en-IN"), 1800);
+      return;
+    }
+    let added = [], failed = [];
+    for (let product of products) {
+      const res = await fetch("/voice-add-to-cart/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": getCSRFToken()
+        },
+        body: new URLSearchParams({ product_name: product })
+      });
+      const result = await res.json();
+      if (result.success) {
+        added.push(product);
+      } else {
+        failed.push(product);
+      }
+    }
+    if (added.length > 0) speak(`${added.join(", ")} added to your cart.`);
+    if (failed.length > 0) speak(`Sorry, ${failed.join(", ")} not available.`);
+    setTimeout(() => askAnythingElse(), 1200);
+  }
+  function askAnythingElse() {
+    speak("Anything else? Say yes to add more, or no to finish.", "en-IN", () => {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-IN";
+      recognition.start();
+      recognition.onresult = function(event) {
+        const response = event.results[0][0].transcript.toLowerCase();
+        if (response.includes("no")) {
+          speak("Thank you for using Voice Cart Assistance. Redirecting you to your cart!");
+          setTimeout(() => { window.location.href = "/cart/"; }, 2000);
+        } else {
+          speak("Please say the next products to add.", "en-IN", () => {
+            listenForProducts(handleProducts, "en-IN");
+          });
+        }
+      };
+      recognition.onerror = function(event) {
+        speak("Sorry, I didn't catch that. Please try again.");
+        setTimeout(askAnythingElse, 1500);
+      };
+    });
+  }
+}
+document.getElementById("assistantBtn").addEventListener("click", function() {
+  startVoiceCart(userName);
+});
+</script>
+</body>
+</html>
