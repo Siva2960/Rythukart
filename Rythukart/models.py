@@ -9,9 +9,9 @@ class Register(models.Model):
     def __str__(self):
         return f"{self.name} ({self.number})"
 
-    class Meta:
-        db_table = 'rythukart_Register'  # Use your actual DB table name
-        managed = False  # if here false nothing change here
+    # class Meta:
+    #     db_table = 'rythukart_Register'  # Use your actual DB table name
+    #     managed = False  # if here false nothing change here
 
 
 
@@ -34,9 +34,7 @@ class Product(models.Model):
 
         def __str__(self):
             return self.name
-        class Meta:
-            db_table = 'rythukart_Product'
-            managed = False
+
 
 
 
@@ -57,9 +55,6 @@ class UserLocation(models.Model):
     def __str__(self):
         return f"{self.near_by},{self.address_line},{self.area}, {self.district} ({self.pincode})"
 
-    class Meta:
-        db_table = 'rk_UserLocation'  # Use your actual DB table name
-        managed = False  # if here false nothing change here
 
 
 
@@ -69,9 +64,6 @@ class Cart(models.Model):
 
     def total(self):
         return sum(item.product.price * item.quantity for item in self.items.all())
-    class Meta:
-        db_table = 'rk_Cart'  # Use your actual DB table name
-        managed = False  # if here false nothing change here
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
@@ -81,9 +73,6 @@ class CartItem(models.Model):
 
     def subtotal(self):
         return self.product.price * self.quantity
-    class Meta:
-        db_table = 'rk_CartItem'  # Use your actual DB table name
-        managed = False  # if here false nothing change here
 
 # models.py
 
@@ -93,18 +82,12 @@ class Order(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     address = models.TextField()
     status = models.CharField(max_length=50, default='Placed')  # Placed, Delivered, etc.
-    class Meta:
-        db_table = 'rythukart_order'  # Use your actual DB table name
-        managed = False  # if here false nothing change here
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    class Meta:
-        db_table = 'rythukart_orderitem'  # Use your actual DB table name
-        managed = False  # if here false nothing change here
 
 class Invoice(models.Model):
     order = models.OneToOneField('Order', on_delete=models.CASCADE)
@@ -112,5 +95,3 @@ class Invoice(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     pdf_file = models.FileField(upload_to='invoices/', blank=True, null=True)
 
-    class Meta:
-        db_table = 'rk_invoice'

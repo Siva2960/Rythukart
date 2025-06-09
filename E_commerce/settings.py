@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-586mu!2$(w923z^y&_^_^&6m7et&d_u%#f%)+jo5)=j!5l+(q#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['rythukart-clevercloud.cleverapps.io']
 
 
 # Application definition
@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'E_commerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'RK',
-        'HOST':'localhost',
-        'PORT':'3306',
-        'USER':'root',
-        'PASSWORD':'123456',
+        'NAME': os.getenv('b3cimpmh2upbpscpaoyv'),
+        'HOST':os.getenv('b3cimpmh2upbpscpaoyv-mysql.services.clever-cloud.com'),
+        'PORT':os.getenv('3306'),
+        'USER':os.getenv('umdz63ctejk9dvyf'),
+        'PASSWORD':os.getenv('N0iq9YFK2Stps356h7Fw'),
     }
 }
 

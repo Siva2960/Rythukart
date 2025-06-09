@@ -31,50 +31,36 @@ def checkUser(number):
     finally:
         con.close()
 
+from django.shortcuts import render
+from .models import Register
+
 def Register_view(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         number = request.POST.get('number')
         password = request.POST.get('password')
 
-        # Validate inputs
+        # 1. Validate form fields
         if not all([name, number, password]):
             return render(request, 'index.html', {'data': 'All fields are required'})
 
-        # Check if user already exists
-        if checkUser(number):
-            return render(request, 'index.html', {'data': 'Phone number already registered'})
+        # 2. Check if number already exists
+        if Register.objects.filter(number=number).exists():
+            return render(request, 'index.html', {'data': 'You are already registered!'})
 
-        # Insert new user
+        # 3. Save new user
         try:
-            db_connection = pymysql.connect(
-                host='127.0.0.1',
-                port=3306,
-                user='root',
-                password='123456',
-                database='RK',
-                charset='utf8'
-            )
-            with db_connection.cursor() as cursor:
-                query = "INSERT INTO rythukart_register (name, number, password) VALUES (%s, %s, %s)"
-                cursor.execute(query, (name, number, password))
-                db_connection.commit()
-
-                if cursor.rowcount == 1:
-                    return render(request, 'R_S.html', {'data': 'Signup successful'})
-                else:
-                    return render(request, 'index.html', {'data': 'Signup failed, try again'})
-
+            Register.objects.create(name=name, number=number, password=password)
+            return render(request, 'R_S.html', {'data': 'Signup successful!'})
         except Exception as e:
-            print("Database insert error:", e)
-            return render(request, 'index.html', {'data': 'Database error during signup'})
+            print("Registration error:", e)
+            return render(request, 'index.html', {'data': 'Something went wrong. Try again.'})
 
-        finally:
-            db_connection.close()
-
+    # If GET request
     return render(request, 'index.html', {'data': 'Invalid request method'})
+
 from django.shortcuts import render, redirect
-import pymysql
+
 from .models import Register
 
 def Login(request):
@@ -82,47 +68,15 @@ def Login(request):
         number = request.POST.get('number')
         password = request.POST.get('password')
 
-        # Connect to your MySQL database
-        con = pymysql.connect(
-            host='127.0.0.1',
-            port=3306,
-            user='root',
-            password='123456',
-            database='RK',
-            charset='utf8'
-        )
-
         try:
-            with con.cursor() as cur:
-                sql = "SELECT name FROM rythukart_register WHERE number=%s AND password=%s"
-                cur.execute(sql, (number, password))
-                result = cur.fetchone()
-
-                if result:
-                    name = result[0]
-
-                    # ✅ Save number to session
-                    request.session['number'] = number
-
-                    # ✅ Sync user into Django ORM if needed (optional, safe)
-                    try:
-                        Register.objects.get(number=number)
-                    except Register.DoesNotExist:
-                        # Only needed if the user is NOT in Django’s ORM
-                        # If your Register model is managed = False, skip this
-                        pass
-
-                    return render(request, 'home.html', {
-                        'data': f'Welcome {name}',
-                        'name': name,
-                    })
-
-                else:
-                    return render(request, 'login.html', {'data': 'Invalid login details'})
-
-        finally:
-            con.close()
-
+            user = Register.objects.get(number=number, password=password)
+            request.session['number'] = number  # Store user number in session
+            return render(request, 'home.html', {
+                'name': user.name,
+                'data': f"Welcome {user.name}"
+            })
+        except Register.DoesNotExist:
+            return render(request, 'login.html', {'data': 'Invalid login details'})
     return render(request, 'login.html')
 
 def logout_view(request):
