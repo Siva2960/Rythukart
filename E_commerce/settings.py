@@ -55,7 +55,7 @@ ROOT_URLCONF = 'E_commerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(r'C:\Users\SK__P\mypro\E_commerce\Rythukart','templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'Rythukart', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
