@@ -76,16 +76,19 @@ WSGI_APPLICATION = 'E_commerce.wsgi.application'
 import os
 import os
 
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'b3cimpmh2upbpscpaoyv'),
-        'USER': os.getenv('DB_USER', 'umdz63ctejk9dvyf'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'N0iq9YFK2Stps356h7Fw'),
-        'HOST': os.getenv('DB_HOST', 'b3cimpmh2upbpscpaoyv-mysql.services.clever-cloud.com'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': os.getenv('MYSQL_ADDON_DB'),
+        'USER': os.getenv('MYSQL_ADDON_USER'),
+        'PASSWORD': os.getenv('MYSQL_ADDON_PASSWORD'),
+        'HOST': os.getenv('MYSQL_ADDON_HOST'),
+        'PORT': os.getenv('MYSQL_ADDON_PORT'),
     }
 }
+
 
 
 # Password validation
