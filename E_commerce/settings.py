@@ -73,15 +73,17 @@ WSGI_APPLICATION = 'E_commerce.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import os
+import os
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('b3cimpmh2upbpscpaoyv'),
-        'HOST':os.getenv('b3cimpmh2upbpscpaoyv-mysql.services.clever-cloud.com'),
-        'PORT':os.getenv('3306'),
-        'USER':os.getenv('umdz63ctejk9dvyf'),
-        'PASSWORD':os.getenv('N0iq9YFK2Stps356h7Fw'),
+        'NAME': os.getenv('DB_NAME', 'b3cimpmh2upbpscpaoyv'),
+        'USER': os.getenv('DB_USER', 'umdz63ctejk9dvyf'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'N0iq9YFK2Stps356h7Fw'),
+        'HOST': os.getenv('DB_HOST', 'b3cimpmh2upbpscpaoyv-mysql.services.clever-cloud.com'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 
