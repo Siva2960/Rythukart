@@ -68,7 +68,7 @@ path('voice-add-to-cart/', views.voice_add_to_cart, name='voice_add_to_cart'),
 
 
 
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
 
