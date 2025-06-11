@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     'Rythukart',
 ]
 
@@ -155,3 +157,11 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/Login/'
 LOGIN_REDIRECT_URL = '/admin_upload/'  # where to go after login
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dak61mpwu',
+    'API_KEY': '421252433986936',
+    'API_SECRET': 'l0g8Q0OZeceuc7PFrYp4BX7HO64',
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
