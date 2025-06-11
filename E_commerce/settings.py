@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-586mu!2$(w923z^y&_^_^&6m7et&d_u%#f%)+jo5)=j!5l+(q#
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'app-9fc24119-5632-44c3-85ce-78620ccdb3a9.cleverapps.io',
+    'app_f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io',
     '127.0.0.1',
     'localhost',
 ]
