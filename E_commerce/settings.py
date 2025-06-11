@@ -25,10 +25,11 @@ SECRET_KEY = 'django-insecure-586mu!2$(w923z^y&_^_^&6m7et&d_u%#f%)+jo5)=j!5l+(q#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 import os
-
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
-
-
+ALLOWED_HOSTS = [
+    "app-f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io",
+    "127.0.0.1",
+    "localhost"
+]
 
 # Application definition
 
