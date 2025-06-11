@@ -79,9 +79,9 @@ WSGI_APPLICATION = 'E_commerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 import os
-import os
+from dotenv import load_dotenv
 
-import os
+load_dotenv()  # this loads variables from .env into os.environ
 
 DATABASES = {
     'default': {
@@ -93,8 +93,6 @@ DATABASES = {
         'PORT': os.getenv('MYSQL_ADDON_PORT'),
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
