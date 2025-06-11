@@ -53,7 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'E_commerce.urls'
 
@@ -93,7 +95,12 @@ DATABASES = {
         'PORT': os.getenv('MYSQL_ADDON_PORT'),
     }
 }
-
+import os
+print("CLOUD DB HOST:", os.getenv('MYSQL_ADDON_HOST'))
+print("CLOUD DB NAME:", os.getenv('MYSQL_ADDON_DB'))
+print("CLOUD DB USER:", os.getenv('MYSQL_ADDON_USER'))
+print("CLOUD DB PORT:", os.getenv('MYSQL_ADDON_PORT'))
+print("CLOUD DB PASSWORD:", os.getenv('MYSQL_ADDON_PASSWORD'))
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -124,9 +131,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
+import os
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 BASE_DIR = r"C:\Users\SK__P\mypro\E_commerce\Rythukart"
