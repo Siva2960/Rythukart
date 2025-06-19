@@ -38,7 +38,7 @@
   <div class="product-grid" id="productList">
     {% for product in products %}
       <div class="product" data-name="{{ product.name }}">
-           <p>Image URL: {{ product.image.url }}</p>
+<!--            <p>Image URL: {{ product.image.url }}</p> -->
         <img src="{{ product.image.url }}" alt="{{ product.name }}">
         <p><strong>{{ product.name }}</strong></p>
         <p>₹{{ product.price }}</p>
