@@ -1,6 +1,6 @@
 # Rythukart
 
-🌐 **Live App:** [https://app-f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io/](https://your-app-link-her) <!-- Replace with your actual deployed URL -->
+🌐 **Live App:** [https://app-f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io/](https://app-f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io/) <!-- Replace with your actual deployed URL -->
 
 A smart voice-assisted e-commerce platform where users can interact hands-free—searching and adding products to their cart using natural speech, with personalized greetings and real-time stock feedback.
 
