@@ -6,3 +6,5 @@ audioop-lts==0.2.1
 asgiref==3.8.1
 mysqlclient==2.2.7
 pillow==11.2.1
+cloudinary
+django-cloudinary-storage
