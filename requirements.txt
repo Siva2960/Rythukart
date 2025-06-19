@@ -1,5 +1,4 @@
 Django==4.2.11
-pip==25.0.1
 pip==25.1.1
 python-dotenv==1.1.0
 weasyprint==65.1
