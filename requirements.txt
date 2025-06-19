@@ -8,3 +8,4 @@ mysqlclient==2.2.7
 pillow==11.2.1
 cloudinary
 django-cloudinary-storage
+whitenoise
