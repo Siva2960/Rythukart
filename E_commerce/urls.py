@@ -4,6 +4,7 @@ from Rythukart import views
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from Rythukart.views import add_to_cart_ajax
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),

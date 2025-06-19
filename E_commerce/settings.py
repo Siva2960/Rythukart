@@ -132,15 +132,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-import os
-
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-BASE_DIR = r"C:\Users\SK__P\mypro\E_commerce\Rythukart"
-import os
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ for production
@@ -151,13 +142,11 @@ STATICFILES_DIRS = [
 ]
 
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/Login/'
 LOGIN_REDIRECT_URL = '/admin_upload/'  # where to go after login
-
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dak61mpwu',

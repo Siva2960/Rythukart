@@ -5,7 +5,7 @@ from .models import Product, Register, Cart, CartItem, UserLocation, Order, Orde
 def index(request):
     return render(request,'index.html')
 
-import pymysql
+
 from django.views.decorators.csrf import csrf_exempt
 
 # views.py
