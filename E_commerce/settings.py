@@ -85,16 +85,29 @@ from dotenv import load_dotenv
 
 load_dotenv()  # this loads variables from .env into os.environ
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('MYSQL_ADDON_DB'),
+#         'USER': os.getenv('MYSQL_ADDON_USER'),
+#         'PASSWORD': os.getenv('MYSQL_ADDON_PASSWORD'),
+#         'HOST': os.getenv('MYSQL_ADDON_HOST'),
+#         'PORT': os.getenv('MYSQL_ADDON_PORT'),
+#     }
+# }
+# this is for python anywhare deploy
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_ADDON_DB'),
-        'USER': os.getenv('MYSQL_ADDON_USER'),
-        'PASSWORD': os.getenv('MYSQL_ADDON_PASSWORD'),
-        'HOST': os.getenv('MYSQL_ADDON_HOST'),
-        'PORT': os.getenv('MYSQL_ADDON_PORT'),
+        'NAME': 'SKREDDY$Rythukart',  # Replace 'yourdbname' with your actual database name from the PythonAnywhere Databases tab
+        'USER': 'SKREDDY',
+        'PASSWORD': 'Siva@6715',    # Replace with the password you set on PythonAnywhere
+        'HOST': 'SKREDDY.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
+
+#  this is for cloud clever deploy
 import os
 print("CLOUD DB HOST:", os.getenv('MYSQL_ADDON_HOST'))
 print("CLOUD DB NAME:", os.getenv('MYSQL_ADDON_DB'))
