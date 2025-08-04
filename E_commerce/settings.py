@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-586mu!2$(w923z^y&_^_^&6m7et&d_u%#f%)+jo5)=j!5l+(q#
 DEBUG = True
 import os
 ALLOWED_HOSTS = [
-    "app-f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io",
+   # "app-f6157d3c-5350-47b5-9efc-b1aa3bbc99ee.cleverapps.io",
+    "SKREDDY.pythonanywhere.com",
     "127.0.0.1",
     "localhost"
 ]
